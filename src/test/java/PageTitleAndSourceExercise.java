@@ -1,4 +1,7 @@
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
@@ -15,46 +18,39 @@ public class PageTitleAndSourceExercise {
     }
 
     @AfterEach
-    public void driverClose(){
+    public void driverClose() {
         driver.quit();
     }
 
     @Test
-    public void getTitle(){
+    public void getTitle() {
         String wikiTitle = "Wikipedia, wolna encyklopedia";
         driver.navigate().to("http://wikipedia.pl/");
-        Assertions.assertEquals(wikiTitle,driver.getTitle(),"Wrong title "+wikiTitle);
+        Assertions.assertEquals(wikiTitle, driver.getTitle(), "Wrong title " + wikiTitle);
 
     }
 
     @Test
-    public void getUrl(){
-        String wikiUrl ="https://www.wikipedia.org/";
+    public void getUrl() {
+        String wikiUrl = "https://www.wikipedia.org/";
         driver.navigate().to("https://www.wikipedia.org/");
-        Assertions.assertEquals(wikiUrl,driver.getCurrentUrl(),"wrong url "+ wikiUrl);
+        Assertions.assertEquals(wikiUrl, driver.getCurrentUrl(), "wrong url " + wikiUrl);
     }
 
     @Test
-    public void getSourcePL(){
+    public void getSourcePL() {
         String wikiSource = "lang=\"pl\"";
         driver.navigate().to("https://www.wikipedia.org/");
-        Assertions.assertTrue(driver.getPageSource().contains(wikiSource),"source "+wikiSource+" can no be found");
+        Assertions.assertTrue(driver.getPageSource().contains(wikiSource), "source " + wikiSource + " can no be found");
     }
 
     @Test
     public void verifyESlang() throws InterruptedException {
         driver.navigate().to("http://wikipedia.pl/");
-       // Thread.sleep(1000);
+        // Thread.sleep(1000);
         driver.findElement(By.cssSelector("a[title='hiszpański']")).click();
         String wikiSource = "lang=\"es\"";
-        Assertions.assertTrue(driver.getPageSource().contains(wikiSource),"source "+wikiSource+" can no be found");
+        Assertions.assertTrue(driver.getPageSource().contains(wikiSource), "source " + wikiSource + " can no be found");
 
     }
-
-
-
-
-    
-
-
 }

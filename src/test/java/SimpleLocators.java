@@ -31,6 +31,7 @@ public class SimpleLocators {
         driver.findElement(By.id("rememberme"));
         driver.findElement(By.linkText("Nie pamiętasz hasła?"));
         driver.findElement(By.linkText("Żeglarstwo"));
+        driver.findElement(By.partialLinkText("Żeg"));
 
     }
 }

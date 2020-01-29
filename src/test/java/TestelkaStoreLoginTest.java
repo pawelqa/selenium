@@ -5,73 +5,80 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.util.concurrent.TimeUnit;
 
 public class TestelkaStoreLoginTest {
     WebDriver driver;
-    WebElement usernameWebELement;
-    WebElement passwordWebElement;
-    WebElement loginButtonWebElement;
-    WebElement loginFormWebElement;
-    String warningWebElement;
-    String usernameAfterLogin;
-    String correctLogin = "paweljuszczak@gmail.com";
+
+    String expectedLoginWithFakePasswordError = "BŁĄD: Dla adresu email mojekontotestowe38@gmail.com podano nieprawidłowe hasło. Nie pamiętasz hasła?";
+    String expectedFakeLoginAndFakePasswordMessage = "Nieznana użytkownik. Proszę sprawdzić ponownie lub spróbować swój email.";
+    String correctLogin = "mojekontotestowe38@gmail.com";
     String correctPassword = "fakehaslo123!";
     String fakeLogin = "fakelogin";
     String fakePassword = "fakepassword";
+    String expectedLogin = "mojekontotestowe38";
 
     @BeforeEach
-    public void driverSetup()  {
+    public void driverSetup() {
         System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedriver.exe");
         driver = new ChromeDriver();
-        driver.manage().window().setSize(new Dimension(1024,720));
+        driver.manage().window().setSize(new Dimension(1200, 700));
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-        driver.manage().timeouts().pageLoadTimeout(5, TimeUnit.SECONDS);
+        driver.manage().timeouts().pageLoadTimeout(15, TimeUnit.SECONDS);
         driver.navigate().to("https://fakestore.testelka.pl/moje-konto/");
-
-        usernameWebELement = driver.findElement(By.cssSelector("input#username"));
-        passwordWebElement = driver.findElement(By.cssSelector("input#password"));
-        loginButtonWebElement = driver.findElement(By.cssSelector("button[name='login']"));
-        loginFormWebElement = driver.findElement(By.cssSelector("form[class='woocommerce-form woocommerce-form-login login']"));
-
     }
 
     @AfterEach
-    public void driverClose(){
+    public void driverClose() {
         driver.close();
         driver.quit();
     }
 
-
     @Test
     public void properLoginAndPasswordTest() {
-            usernameWebELement.sendKeys(correctLogin);
-            passwordWebElement.sendKeys(correctPassword);
-            loginButtonWebElement.click();
-            usernameAfterLogin = driver.findElement(By.cssSelector("div[class='woocommerce-MyAccount-content'] strong")).getText() ;
-            String expectedLogin = "paweljuszczak";
-            Assertions.assertEquals(expectedLogin,usernameAfterLogin);
-
+        enterCredentialsAndSubmit(correctLogin, correctPassword);
+        Assertions.assertEquals(expectedLogin, getUsernameAfterLogin()
+                , "### " + getUsernameAfterLogin() + " is not correct user, there should be " + expectedLogin + " ###");
     }
 
     @Test
-    public void fakeLoginAndfakePasswordTest(){
-        usernameWebELement.sendKeys(fakeLogin);
-        passwordWebElement.sendKeys(fakePassword);
-        loginButtonWebElement.click();
-        warningWebElement = driver.findElement(By.cssSelector("ul[class='woocommerce-error'] li")).getText();
-        String expectedErrorMessage = "Nieznana użytkownik";
-        Assertions.assertTrue(warningWebElement.contains(expectedErrorMessage));
+    public void fakeLoginAndFakePasswordTest() {
+        enterCredentialsAndSubmit(fakeLogin, fakePassword);
+        Assertions.assertEquals(expectedFakeLoginAndFakePasswordMessage, getFakeLoginAndFakePasswordWarning()
+                , " ### Expected error message "
+                        + expectedFakeLoginAndFakePasswordMessage
+                        + " , actual message: "
+                        + getFakeLoginAndFakePasswordWarning());
     }
 
-//    @Test
-//    public void loginWithoutAnyInputsTest(){
-//        loginButtonWebElement.click();
-//        warningWebElement = driver.findElement(By.cssSelector("ul[class='woocommerce-error'] strong")).getText();
-//        String expectedErrorMessage = "Bł";
-//        Assertions.assertTrue(warningWebElement.contains(expectedErrorMessage));
-//    }
+    @Test
+    public void loginWithFakePasswordTest() {
+        enterCredentialsAndSubmit(correctLogin, fakePassword);
+        Assertions.assertEquals(expectedLoginWithFakePasswordError, getActualLoginWithFakePasswordWarning()
+                , " ### Expected error message "
+                        + expectedLoginWithFakePasswordError
+                        + " , actual message: "
+                        + getActualLoginWithFakePasswordWarning());
+    }
+
+    private String getActualLoginWithFakePasswordWarning() {
+        return driver.findElement(By.cssSelector("ul[class='woocommerce-error']")).getText();
+    }
+
+    private String getUsernameAfterLogin() {
+        return driver.findElement(By.cssSelector("div[class='woocommerce-MyAccount-content'] strong")).getText();
+    }
+
+    private String getFakeLoginAndFakePasswordWarning() {
+        return driver.findElement(By.cssSelector("ul[class='woocommerce-error'] li")).getText();
+    }
+
+    public void enterCredentialsAndSubmit(String login, String password) {
+        driver.findElement(By.cssSelector("input#username")).sendKeys(login);
+        driver.findElement(By.cssSelector("input#password")).sendKeys(password);
+        driver.findElement(By.cssSelector("button[name='login']")).click();
+    }
+
 }

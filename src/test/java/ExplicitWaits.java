@@ -31,6 +31,7 @@ public class ExplicitWaits {
         driver.manage().timeouts().pageLoadTimeout(20, TimeUnit.SECONDS);
         //driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         driver.navigate().to("https://fakestore.testelka.pl/product/egipt-el-gouna/");
+        driver.findElement(By.cssSelector("a.woocommerce-store-notice__dismiss-link")).click();
     }
 
     @AfterEach
@@ -68,8 +69,9 @@ public class ExplicitWaits {
 //    public void alertMessageAfterRemoveCouponCodeUse() {
 //        activateCouponCode(couponCode10percent);
 //        waitForProcessEnding();
+//        By removeLink = By.cssSelector("a.woocommerce-remove-coupon");
 //        //driver.findElement(By.linkText("[Usuń]")).click();
-//        wait.until(ExpectedConditions.elementToBeClickable(By.linkText("[Usuń]"))).click();
+//        wait.until(ExpectedConditions.elementToBeClickable(removeLink)).click();
 //        waitForProcessEnding();
 //        String actualBasketAlert = getCouponActivateMessage();
 //        Assertions.assertEquals(expectedBasketAlertAfterRemoveCoupon, actualBasketAlert

@@ -44,7 +44,7 @@ public class ScrollPageJavaScript {
         WebElement relatedProducts = driver.findElement(By.cssSelector("section[class='related products']"));
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView()",relatedProducts);
         List<WebElement> productBanner = driver.findElements(By.cssSelector("section[class='storefront-sticky-add-to-cart storefront-sticky-add-to-cart--slideInDown']"));
-        Assertions.assertTrue(productBanner.size()==1);
+        Assertions.assertEquals(1, productBanner.size());
 //        WebElement productBanner = driver.findElement(By.cssSelector("section[class='storefront-sticky-add-to-cart storefront-sticky-add-to-cart--slideInDown']"));
 //        Assertions.assertNotNull(productBanner);
     }

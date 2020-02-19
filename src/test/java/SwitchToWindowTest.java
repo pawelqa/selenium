@@ -51,8 +51,6 @@ public class SwitchToWindowTest {
         String secondWindow = windows.iterator().next();
         driver.switchTo().window(secondWindow);
 
-       // WebElement productName = driver.findElement(By.xpath(".//table[@class='shop_table cart wishlist_table wishlist_view traditional responsive']//tr[@id='yith-wcwl-row-386']/td[@class='product-name']/a"));
-
         By removeFromWishList = By.cssSelector("a[class='remove remove_from_wishlist']");
         driver.findElement(removeFromWishList).click();
         By emptyWishList = By.cssSelector("td.wishlist-empty");

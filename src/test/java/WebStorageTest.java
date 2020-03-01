@@ -10,6 +10,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public class WebStorageTest {
@@ -53,5 +54,18 @@ public class WebStorageTest {
         wait.until(d -> driver.getSessionStorage().size()==3);
         Assertions.assertTrue(driver.getSessionStorage().keySet().contains("wc_cart_created"),
                 "wc_cart_created was not added to Session Storage");
+    }
+
+    @Test
+    public void removeSessionStorageKeySet(){
+        Set<String> keySet = driver.getSessionStorage().keySet();
+        String fragmentKey = "";
+        for (String key : keySet) {
+            if (key.contains("wc_fragments")){
+                fragmentKey = key;
+            }
+        }
+        String removedKey = driver.getSessionStorage().removeItem(fragmentKey);
+        Assertions.assertNotNull(removedKey);
     }
 }

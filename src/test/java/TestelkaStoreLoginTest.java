@@ -1,12 +1,13 @@
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.WebDriver;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.io.FileHandler;
 
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
 public class TestelkaStoreLoginTest {
@@ -20,6 +21,18 @@ public class TestelkaStoreLoginTest {
     String fakePassword = "fakepassword";
     String expectedLogin = "mojekontotestowe38";
 
+    private String captureScreenshot(TestInfo info) throws IOException {
+        File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+        LocalDateTime dateTimeNow = LocalDateTime.now();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH-mm-ss");
+        String screenshotPath = "C:\\SeleniumTests\\"+ info.getDisplayName() + " " + dateTimeFormatter.format(dateTimeNow) + ".jpg";
+        FileHandler.copy(screenshot, new File(screenshotPath));
+        return screenshotPath;
+    }
+
+    @RegisterExtension
+    TestStatus testStatus = new TestStatus();
+
     @BeforeEach
     public void driverSetup() {
         System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedriver.exe");
@@ -28,11 +41,14 @@ public class TestelkaStoreLoginTest {
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         driver.manage().timeouts().pageLoadTimeout(15, TimeUnit.SECONDS);
         driver.navigate().to("https://fakestore.testelka.pl/moje-konto/");
+
     }
 
     @AfterEach
-    public void driverClose() {
-        driver.close();
+    public void driverQuit(TestInfo testInfo) throws IOException {
+        if (testStatus.testIsFailed){
+            System.out.println("Test screenshot is captured at: "+ captureScreenshot(testInfo));
+        }
         driver.quit();
     }
 
